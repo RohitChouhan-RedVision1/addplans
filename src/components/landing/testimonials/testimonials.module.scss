@@ -1,0 +1,39 @@
+.testimonialsectionone {
+    .rvtsoRowe {
+        max-width: 800px;
+        margin: 0 auto;
+        width: 100%;
+        .rvtsoitems {
+            .rvtsoitemsimaeg {
+                width: 120px;
+                height: 120px;
+                margin: 15px auto;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border-radius: 50%;
+                padding: 15px;
+                background: var(--rv-white);
+                box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.1);
+                border-left: 2px solid var(--rv-primary);
+                img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: contain;
+                    border-radius: 50%;
+                }
+            }
+            .rvtsoitemsdisc {
+                p {
+                    font-size: 24px;
+                }
+            }
+            .rvtsoitemsicones {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 20px 0;
+            }
+        }
+    }
+}

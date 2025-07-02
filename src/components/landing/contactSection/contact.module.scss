@@ -1,0 +1,64 @@
+@mixin mediascreen ($widthpx) {
+    @media only screen and (max-width: $widthpx) {
+        @content;
+    }
+}
+
+.gtitnSection {
+    background: -webkit-linear-gradient(90deg, #c5cbd6 -0.1%, #fff 50%);
+    .gtitnsRow {
+        .gtitnsCol {
+            max-width: calc(50% - 25px);
+            @include mediascreen(767px) {
+                max-width: 100%;
+            }
+        }
+    }
+    .gtitnscCard {
+        ul {
+            border-left: 1px solid #ddd;
+            position: relative;
+            padding-left: 20px;
+            &::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 30%;
+                transition: translateY(-30%);
+                height: 40%;
+                width: 1px;
+                background-color: var(--rv-secondary);
+            }
+            li {
+                display: flex;
+                padding: 10px 0;
+                gap: 10px;
+                .gtitnscicone {
+                    width: 40px;
+                    height: 40px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    svg {
+                        fill: var(--rv-secondary);
+                    }
+                }
+            }
+        }
+    }
+}
+
+.gtitnssCard {
+    border: 1px solid #ddd;
+    background: var(--rv-white);
+    padding: 35px;
+    background-color: var(--rv-white);
+    clip-path: polygon(0 0, 100% 0, 100% 0, 100% 79%, 86% 100%, 0 100%, 0 100%, 0 0);
+    .form {
+        .inputGroup {
+            display: flex;
+            gap: 30px;
+            justify-content: space-between;
+        }
+    }
+}

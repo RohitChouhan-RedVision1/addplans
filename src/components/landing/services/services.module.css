@@ -1,0 +1,91 @@
+.servicesectionone {
+  background-color: var(--rv-third);
+}
+.servicesectionone .rvssRow {
+  justify-content: space-between;
+}
+.servicesectionone .rvssRow .rvssCol {
+  max-width: calc(50% - 15px);
+  width: 100%;
+}
+@media only screen and (max-width: 767px) {
+  .servicesectionone .rvssRow .rvssCol {
+    max-width: 100%;
+  }
+}
+.servicesectionone .rvsshaddingtitle {
+  position: sticky;
+  top: 80px;
+}
+.servicesectionone .rvsshaddingtitle p {
+  padding-left: 30px;
+  max-width: 500px;
+  border-left: 1px solid #000;
+}
+.servicesectionone .rvssicardsRow {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.servicesectionone .rvssicardsRow .rvssicards {
+  max-width: calc(50% - 15px);
+}
+@media only screen and (max-width: 1024px) {
+  .servicesectionone .rvssicardsRow .rvssicards {
+    max-width: 100%;
+  }
+}
+.servicesectionone .rvssicardsRow .rvssicards a {
+  display: block;
+  padding: 20px;
+  background: var(--rv-white);
+  border-radius: 10px;
+  transition: 0.5s;
+}
+.servicesectionone .rvssicardsRow .rvssicards a:hover {
+  transition: 0.5s;
+  transform: translateY(-10px);
+  background: var(--rv-secondary);
+}
+.servicesectionone .rvssicardsRow .rvssicards a:hover img {
+  filter: brightness(0) invert(1);
+  transition: 0.5s;
+}
+.servicesectionone .rvssicardsRow .rvssicards a:hover .rvssititle {
+  transition: 0.5s;
+  color: var(--rv-white);
+}
+.servicesectionone .rvssicardsRow .rvssicards a:hover p {
+  transition: 0.5s;
+  color: var(--rv-white);
+}
+.servicesectionone .rvssicardsRow .rvssicards a:hover .rvssirigth {
+  transition: 0.5s;
+  color: var(--rv-white);
+  background: var(--rv-primary);
+}
+.servicesectionone .rvssicardsRow .rvssicards a img {
+  filter: brightness(0) invert(0);
+  transition: 0.5s;
+}
+.servicesectionone .rvssicardsRow .rvssicards a p {
+  margin-bottom: 10px;
+  transition: 0.5s;
+}
+.servicesectionone .rvssicardsRow .rvssicards a .rvssititle {
+  margin: 10px 0;
+  transition: 0.5s;
+}
+.servicesectionone .rvssicardsRow .rvssicards a .rvssirigth {
+  width: 45px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  transition: 0.5s;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+.servicesectionone .rvssicardsRow .rvssicards:nth-child(even) {
+  margin-top: 50px;
+}

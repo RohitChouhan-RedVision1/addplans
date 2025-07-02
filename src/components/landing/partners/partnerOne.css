@@ -1,0 +1,23 @@
+.patner-section-one {
+    background-color: var(--rv-grey);
+}
+
+.partner-slide-item-one {
+    border-left: 1px solid rgba(0, 0, 0, 0.2);
+    height: 100%;
+    display: flex !important;
+    justify-content: center;
+    height: 120px;
+    align-items: center;
+}
+
+.patner-slide-item-one img {
+    filter: brightness(0.5);
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.patner-slide-item-one img {
+    transition: all 0.5s;
+}

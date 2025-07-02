@@ -1,0 +1,166 @@
+.whyChooseSection {
+  position: relative;
+  background-image: url("/images/tools-section.webp");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: top;
+  background-attachment: fixed;
+  padding-bottom: 325px;
+}
+@media only screen and (max-width: 1340px) {
+  .whyChooseSection {
+    padding-bottom: 348px;
+  }
+}
+@media only screen and (max-width: 992px) {
+  .whyChooseSection {
+    padding-bottom: 235px;
+  }
+}
+@media only screen and (max-width: 767px) {
+  .whyChooseSection {
+    padding-bottom: 40px;
+  }
+}
+.whyChooseSection::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 61.3%;
+  left: 0;
+  top: 0;
+  background: rgba(0, 0, 0, 0.4117647059);
+  z-index: 0;
+}
+@media only screen and (max-width: 1340px) {
+  .whyChooseSection::after {
+    height: 61%;
+  }
+}
+@media only screen and (max-width: 1024px) {
+  .whyChooseSection::after {
+    height: 55%;
+  }
+}
+@media only screen and (max-width: 992px) {
+  .whyChooseSection::after {
+    height: 64%;
+  }
+}
+.whyChooseSection::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 38.7%;
+  left: 0;
+  bottom: 0;
+  background: var(--rv-white);
+}
+@media only screen and (max-width: 1340px) {
+  .whyChooseSection::before {
+    height: 39%;
+  }
+}
+@media only screen and (max-width: 1024px) {
+  .whyChooseSection::before {
+    height: 45%;
+  }
+}
+@media only screen and (max-width: 992px) {
+  .whyChooseSection::before {
+    height: 36%;
+  }
+}
+.whyChooseSection .whyChoosehadding {
+  max-width: 600px;
+}
+.whyChooseSection .whyChoosehadding h6,
+.whyChooseSection .whyChoosehadding h3 {
+  color: var(--rv-white);
+}
+.whyChooseSection .whyChooserow {
+  position: relative;
+  z-index: 1;
+}
+.whyChooseSection .whyChooserow .rvwcrRow {
+  justify-content: center;
+  gap: 0;
+}
+@media only screen and (max-width: 767px) {
+  .whyChooseSection .whyChooserow .rvwcrRow {
+    gap: 20px;
+  }
+}
+.whyChooseSection .whyChooserow .rvwcrRow .rvwcrCol {
+  max-width: 25%;
+  width: 100%;
+}
+@media only screen and (max-width: 767px) {
+  .whyChooseSection .whyChooserow .rvwcrRow .rvwcrCol {
+    max-width: calc(50% - 25px);
+  }
+}
+@media only screen and (max-width: 575px) {
+  .whyChooseSection .whyChooserow .rvwcrRow .rvwcrCol {
+    max-width: 100%;
+  }
+}
+.whyChooseSection .whyChooserow .rvwcrRow .rvwcrCol:nth-child(2n) .rvwcrCard {
+  -webkit-clip-path: polygon(20% 0, 100% 0, 100% 33%, 100% 70%, 74% 100%, 20% 100%, 0 100%, 0 0);
+          clip-path: polygon(20% 0, 100% 0, 100% 33%, 100% 70%, 74% 100%, 20% 100%, 0 100%, 0 0);
+  background-color: var(--rv-primary);
+  color: var(--rv-white);
+  transform: scaleY(1);
+  transform-origin: top;
+  transition: transform 1.5s 0.8s;
+  position: relative;
+  top: 245px;
+}
+@media only screen and (max-width: 1340px) {
+  .whyChooseSection .whyChooserow .rvwcrRow .rvwcrCol:nth-child(2n) .rvwcrCard {
+    top: 268px;
+  }
+}
+@media only screen and (max-width: 1024px) {
+  .whyChooseSection .whyChooserow .rvwcrRow .rvwcrCol:nth-child(2n) .rvwcrCard {
+    top: 200px;
+  }
+}
+@media only screen and (max-width: 767px) {
+  .whyChooseSection .whyChooserow .rvwcrRow .rvwcrCol:nth-child(2n) .rvwcrCard {
+    transform: scaleY(1);
+    top: 0;
+    -webkit-clip-path: polygon(20% 0, 75% 0, 100% 30%, 100% 100%, 80% 100%, 20% 100%, 0 100%, 0 0);
+            clip-path: polygon(20% 0, 75% 0, 100% 30%, 100% 100%, 80% 100%, 20% 100%, 0 100%, 0 0);
+  }
+}
+.whyChooseSection .whyChooserow .rvwcrRow .rvwcrCol .rvwcrCard {
+  background: var(--rv-primary);
+  -webkit-backdrop-filter: blur(26px);
+          backdrop-filter: blur(26px);
+  -webkit-clip-path: polygon(20% 0, 75% 0, 100% 30%, 100% 100%, 80% 100%, 20% 100%, 0 100%, 0 0);
+          clip-path: polygon(20% 0, 75% 0, 100% 30%, 100% 100%, 80% 100%, 20% 100%, 0 100%, 0 0);
+  color: var(--rv-white);
+  padding: 43px;
+  transition: all 0.5s;
+  display: block;
+  min-height: 245px;
+}
+@media only screen and (max-width: 1340px) {
+  .whyChooseSection .whyChooserow .rvwcrRow .rvwcrCol .rvwcrCard {
+    min-height: 268px;
+  }
+}
+@media only screen and (max-width: 1024px) {
+  .whyChooseSection .whyChooserow .rvwcrRow .rvwcrCol .rvwcrCard {
+    padding: 20px;
+    min-height: 200px;
+  }
+}
+.whyChooseSection .whyChooserow .rvwcrRow .rvwcrCol .rvwcrCard:hover {
+  transition: all 0.5s;
+  background: var(--rv-secondary);
+}
+.whyChooseSection .whyChooserow .rvwcrRow .rvwcrCol .rvwcrCard h5 {
+  margin-top: 10px;
+}

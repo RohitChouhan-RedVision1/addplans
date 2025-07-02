@@ -1,0 +1,90 @@
+@mixin mediascreen ($widthpx) {
+    @media only screen and (max-width: $widthpx) {
+        @content;
+    }
+}
+
+.hdiwSection {
+    background: linear-gradient(180deg, #fff 0, #f0ece8 52.07%, #0220614a 118.82%);
+    @include mediascreen(767px) {
+        padding-bottom: 150px;
+    }
+    .hdiwRow {
+        justify-content: center;
+        margin-left: -160px;
+        @include mediascreen(1024px) {
+            margin-left: -85px;
+        }
+        @include mediascreen(767px) {
+            margin-left: -0px;
+        }
+        .hdiwCols {
+            max-width: calc(25% - 25px);
+            @include mediascreen(1024px) {
+                max-width: calc(35% - 25px);
+                width: 100%;
+            }
+            @include mediascreen(767px) {
+                max-width: 100%;
+                width: 100%;
+            }
+            .hdiwCard {
+                display: flex;
+                align-items: center;
+                width: 350px;
+                height: 350px;
+                border: 1px solid #ddd;
+                cursor: pointer;
+                background: var(--rv-white);
+                border-radius: 50%;
+                box-shadow: rgba(17, 17, 26, 0.05) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 0px 8px;
+                margin-right: -160px;
+                transition: .5s;
+                position: relative;
+                overflow: hidden;
+                @include mediascreen(767px) {
+                    margin: 0 auto;
+                    margin-bottom: -120px;
+                }
+                &:hover {
+                    transition: 1s;
+                    z-index: 1;
+                    .hdiwCardBody {
+                        transition: .5s;
+                        .hdiwCardmainBody {
+                            transition: 2s;
+                            h4,
+                            p,
+                            .hdiwIcone {
+                                position: relative;
+                                transition: 2s;
+                                z-index: 1;
+                                filter: brightness(0) invert(1);
+                                color: var(--rv-white);
+                            }
+                        }
+                    }
+                    .hdiwani {
+                        transition: 2s;
+                        span {
+                            transform: translateY(-50%);
+                            transition: 2s;
+                        }
+                    }
+                }
+                .hdiwCardBody {
+                    padding: 20px 20px 20px 60px;
+                    transition: 2s;
+                    .hdiwCardmainBody {
+                        transition: 2s;
+                        h4,
+                        p,
+                        .hdiwIcone {
+                            transition: 2s;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

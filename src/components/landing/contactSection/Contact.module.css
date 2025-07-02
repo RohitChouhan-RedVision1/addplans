@@ -1,0 +1,55 @@
+.gtitnSection {
+  background: -webkit-linear-gradient(90deg, #c5cbd6 -0.1%, #fff 50%);
+}
+.gtitnSection .gtitnsRow .gtitnsCol {
+  max-width: calc(50% - 25px);
+}
+@media only screen and (max-width: 767px) {
+  .gtitnSection .gtitnsRow .gtitnsCol {
+    max-width: 100%;
+  }
+}
+.gtitnSection .gtitnscCard ul {
+  border-left: 1px solid #ddd;
+  position: relative;
+  padding-left: 20px;
+}
+.gtitnSection .gtitnscCard ul::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 30%;
+  transition: translateY(-30%);
+  height: 40%;
+  width: 1px;
+  background-color: var(--rv-secondary);
+}
+.gtitnSection .gtitnscCard ul li {
+  display: flex;
+  padding: 10px 0;
+  gap: 10px;
+}
+.gtitnSection .gtitnscCard ul li .gtitnscicone {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.gtitnSection .gtitnscCard ul li .gtitnscicone svg {
+  fill: var(--rv-secondary);
+}
+
+.gtitnssCard {
+  border: 1px solid #ddd;
+  background: var(--rv-white);
+  padding: 35px;
+  background-color: var(--rv-white);
+  -webkit-clip-path: polygon(0 0, 100% 0, 100% 0, 100% 79%, 86% 100%, 0 100%, 0 100%, 0 0);
+          clip-path: polygon(0 0, 100% 0, 100% 0, 100% 79%, 86% 100%, 0 100%, 0 100%, 0 0);
+}
+.gtitnssCard .form .inputGroup {
+  display: flex;
+  gap: 30px;
+  justify-content: space-between;
+}

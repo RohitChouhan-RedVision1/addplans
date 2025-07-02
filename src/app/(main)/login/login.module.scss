@@ -1,0 +1,11 @@
+.rvFull {
+    .rvFullBtn {
+        max-width: 100%;
+        width: 100%;
+        &::before {
+            width: 500PX;
+            height: 300px;
+            transform: translateY(250px);
+        }
+    }
+}

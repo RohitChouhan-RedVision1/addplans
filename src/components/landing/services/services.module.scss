@@ -1,0 +1,93 @@
+@mixin mediascreen ($widthpx) {
+    @media only screen and (max-width: $widthpx) {
+        @content;
+    }
+}
+
+.servicesectionone {
+    background-color: var(--rv-third);
+    .rvssRow {
+        justify-content: space-between;
+        .rvssCol {
+            max-width: calc(50% - 15px);
+            width: 100%;
+            @include mediascreen(767px) {
+                max-width: 100%;
+            }
+        }
+    }
+    .rvsshaddingtitle {
+        position: sticky;
+        top: 80px;
+        p {
+            padding-left: 30px;
+            max-width: 500px;
+            border-left: 1px solid #000;
+        }
+    }
+    .rvssicardsRow {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        .rvssicards {
+            max-width: calc(50% - 15px);
+            @include mediascreen(1024px) {
+                max-width: 100%;
+            }
+            a {
+                display: block;
+                padding: 20px;
+                background: var(--rv-white);
+                border-radius: 10px;
+                transition: .5s;
+                &:hover {
+                    transition: .5s;
+                    transform: translateY(-10px);
+                    background: var(--rv-secondary);
+                    img {
+                        filter: brightness(0) invert(1);
+                        transition: .5s;
+                    }
+                    .rvssititle {
+                        transition: .5s;
+                        color: var(--rv-white);
+                    }
+                    p {
+                        transition: .5s;
+                        color: var(--rv-white);
+                    }
+                    .rvssirigth {
+                        transition: .5s;
+                        color: var(--rv-white);
+                        background: var(--rv-primary);
+                    }
+                }
+                img {
+                    filter: brightness(0) invert(0);
+                    transition: .5s;
+                }
+                p {
+                    margin-bottom: 10px;
+                    transition: .5s;
+                }
+                .rvssititle {
+                    margin: 10px 0;
+                    transition: .5s;
+                }
+                .rvssirigth {
+                    width: 45px;
+                    height: 40px;
+                    display: flex;
+                    justify-content: center;
+                    transition: .5s;
+                    align-items: center;
+                    border: 1px solid #ddd;
+                    border-radius: 10px;
+                }
+            }
+            &:nth-child(even) {
+                margin-top: 50px;
+            }
+        }
+    }
+}

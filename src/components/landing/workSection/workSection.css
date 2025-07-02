@@ -1,0 +1,15 @@
+.sipcal .rvRow .rvCol {
+  max-width: calc(50% - 25px);
+}
+@media only screen and (max-width: 767px) {
+  .sipcal .rvRow .rvCol {
+    max-width: 100%;
+  }
+}
+.sipcal .rvRow .rvsipcard {
+  border: 1px solid #ddd;
+  padding: 15px;
+  box-shadow: 0 0 10px 0 #ddd;
+  border-radius: 10px;
+  background: var(--rv-white);
+}
