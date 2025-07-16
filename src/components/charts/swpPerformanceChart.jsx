@@ -47,7 +47,7 @@ const filterDataByRange = (sipData) => {
     }));
 };
 
-export function SwpPerformanceChart({ piedata, startDate, endDate, title, withdrawal }) {
+export function SwpPerformanceChart({ piedata, startDate, endDate, title }) {
     const [chartData, setChartData] = React.useState([]);
 
     // Effect to update chart data whenever piedata changes
@@ -58,32 +58,6 @@ export function SwpPerformanceChart({ piedata, startDate, endDate, title, withdr
     return (
         <Card>
             <CardHeader>
-                <div className="grid grid-cols-6 gap-x-3 mb-5">
-                    <div className="py-2 px-1 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
-                        <h1 className="font-semibold text-gray-800 text-sm">Amount Invested</h1>
-                        <h1 className="font-medium text-gray-900 text-sm">{piedata?.initialAmount}</h1>
-                    </div>
-                    <div className="py-2 px-1 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
-                        <h1 className="font-semibold text-gray-800 text-sm">Monthly Withdrawl</h1>
-                        <h1 className="font-medium text-gray-900 text-sm">{withdrawal}</h1>
-                    </div>
-                    <div className="py-2 px-1 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
-                        <h1 className="font-semibold text-gray-800 text-sm">Total Withdrawl (A)</h1>
-                        <h1 className="font-medium text-gray-900 text-sm">{piedata?.totalWithdrawlAmount}</h1>
-                    </div>
-                    <div className="py-2 px-1 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
-                        <h1 className="font-semibold text-gray-800 text-sm">Remaning Fund Value (B)</h1>
-                        <h1 className="font-medium text-gray-900 text-sm">{piedata?.fundRemaining}</h1>
-                    </div>
-                    <div className="py-2 px-1 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
-                        <h1 className="font-semibold text-gray-800 text-sm">Total Portfolio Value (A+B)</h1>
-                        <h1 className="font-medium text-gray-900 text-sm">{piedata?.portFolioValue}</h1>
-                    </div>
-                    <div className="py-2 px-1 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
-                        <h1 className="font-semibold text-gray-800 text-sm">XIRR (%)</h1>
-                        <h1 className="font-medium text-gray-900 text-sm">{piedata?.xirrRate}</h1>
-                    </div>
-                </div>
                 <CardTitle>{title}</CardTitle>
                 <CardDescription>
                     {startDate} to {endDate} (Current Value As on {endDate})

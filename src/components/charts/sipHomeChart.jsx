@@ -21,7 +21,7 @@ export const description = "A pie chart with a legend"
 const chartConfig = {
     invested: {
         label: "",
-        color: "var(--rv-secondary)",
+        color: "var(--rv-white)",
     },
     return: {
         label: "",

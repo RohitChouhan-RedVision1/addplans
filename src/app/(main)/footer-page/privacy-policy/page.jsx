@@ -34,15 +34,15 @@ export default function PrivacyPolicy() {
 
     function createMarkup() {
         const highlightedText = data
-            .replace(/Your Company name/gi, `<mark style="background-color: transparent; font-size: 16px">${mainData?.websiteName}</mark>`)
-            .replace(/What we collect/gi, '<br><br><mark style="background-color: transparent; font-size: 18px">What we collect</mark> <br/>')
-            .replace(/Name and contact details/gi, '<br><br><mark style="background-color: transparent; font-size: 18px">Name and contact details</mark><br>')
+            .replace(/Your Company name/gi, `<b>${mainData?.websiteName}</b>`)
+            .replace(/What we collect/gi, '<br><br><h5>What we collect</h5> <br/>')
+            .replace(/Name and contact details/gi, '<br><br><h5>Name and contact details</h5><br>')
             .replace(/Collection Use of image data/gi, '<br><br><mark style="background-color: transparent; font-size: 18px">Collection Use of image data</mark>')
-            .replace(/Use of location data/gi, '<br><br><mark style="background-color: transparent; font-size: 18px">Use of location data</mark><br>')
-            .replace(/Security/, '<br><br><mark style="background-color: transparent; font-size: 18px">Security</mark><br>')
-            .replace(/Links to other websites/, '<br><br><mark style="background-color: transparent; font-size: 18px">Links to other websites</mark><br>')
-            .replace(/Controlling your personal information/gi, '<br><br><mark style="background-color: transparent; font-size: 18px">Controlling your personal information</mark><br>')
-            .replace(/Security certificates/gi, '<br><br><mark style="background-color: transparent; font-size: 18px">Security certificates</mark><br>')
+            .replace(/Use of location data/gi, '<br><br><h5>Use of location data</h5><br>')
+            .replace(/Security/, '<br><br><h5>Security</h5><br>')
+            .replace(/Links to other websites/, '<br><br><h5>Links to other websites</h5><br>')
+            .replace(/Controlling your personal information/gi, '<br><br><h5>Controlling your personal information</h5><br>')
+            .replace(/Security certificates/gi, '<br><br><h5>Security certificates</h5><br>')
         return { __html: highlightedText };
     }
 

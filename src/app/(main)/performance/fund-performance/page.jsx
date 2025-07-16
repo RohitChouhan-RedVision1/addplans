@@ -5,10 +5,8 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Loading from "./loading";
 import PageLoading from "./loadingpage";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import CryptoJS from "crypto-js";
 import RvBreadcrumbs from "@/components/landing/page-breadcrumbs/rvbreadcrumbs";
- 
+
 export default function MarketUpdate() {
   const [categories, setCategories] = useState([]);
   const [schemes, setSchemes] = useState([]);
@@ -19,9 +17,8 @@ export default function MarketUpdate() {
   const [searchTerm, setSearchTerm] = useState(""); // State for search input
   const [loading, setLoading] = useState(false);
   const [pageloading, setPageLoading] = useState(false);
-  const SECRET_KEY = process.env.NEXT_PUBLIC_SECRET_KEY;
-  const router= useRouter()
- 
+  const router = useRouter();
+
   const fetchCategories = async () => {
     setPageLoading(true);
     try {
@@ -38,9 +35,8 @@ export default function MarketUpdate() {
       setPageLoading(false);
     }
   };
- 
+
   const fetchSchemes = async (category) => {
-    console.log("category:", category);
     setLoading(true);
     try {
       const response = await axios.get(
@@ -61,17 +57,15 @@ export default function MarketUpdate() {
       setLoading(false);
     }
   };
- 
+
   const fetchPerformanceData = async (schemeType) => {
     setLoading(true);
     try {
-      const sanitizedSchemeType = schemeType.includes("&") ? schemeType.replace(/&/g, "%26") : schemeType;
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_DATA_API}/api/open-apis/fund-performance/fp-data?categorySchemes=${sanitizedSchemeType}&apikey=${process.env.NEXT_PUBLIC_API_KEY}`
+        `${process.env.NEXT_PUBLIC_DATA_API}/api/open-apis/fund-performance/fp-data?categorySchemes=${schemeType}&apikey=${process.env.NEXT_PUBLIC_API_KEY}`
       );
       if (response.status === 200) {
         setPerformanceData(response.data.data);
-        console.log("Schemes response:", response);
       }
     } catch (error) {
       console.error("Error fetching performance data:", error);
@@ -79,79 +73,77 @@ export default function MarketUpdate() {
       setLoading(false);
     }
   };
- 
+
   useEffect(() => {
     fetchCategories();
   }, []);
- 
+
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
     fetchSchemes(category);
   };
- 
+
   const handleSchemeSelect = (scheme) => {
     setSelectedScheme(scheme);
     fetchPerformanceData(scheme);
   };
- 
-  const handlePerformanceClick = (performance) => {
-     const dataToStore = {
-      pcode: performance.pcode,
-      ftype:selectedScheme,
-      timestamp: Date.now(),
-    };
-   
-     
-    const encrypted = CryptoJS.AES.encrypt(
-    
-      JSON.stringify(dataToStore),
-      SECRET_KEY
-    ).toString();
 
-    localStorage.setItem("encryptedFundPerormanceData", encrypted);
+  const handlePerformanceClick = (performance) => {
+    const slug = performance.funddes
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, "")
+      .trim()
+      .replace(/\s+/g, "-")
+      .replace(/--+/g, "-")
+      .replace(/^-+|-+$/g, "");
+    const queryParameters = new URLSearchParams({
+      id: selectedScheme,
+      pcode: performance.pcode,
+    }).toString();
+
     // Navigate to the performance page with slug and query parameters
-     window.location.href=`/performance/fund-performance/fund-details`;
+    router.push(`/performance/fund-performance/${slug}?${queryParameters}`);
   };
- 
+
   // Search filter logic for schemes
   const handleSearchChange = (e) => {
     const searchValue = e.target.value.toLowerCase();
     setSearchTerm(searchValue);
- 
+
     const filtered = schemes?.filter((scheme) =>
       scheme.toLowerCase().includes(searchValue)
     );
     setFilteredSchemes(filtered);
   };
- 
 
+  console.log(categories)
   return (
     <div className="">
- 
-            <RvBreadcrumbs
-                maintitle="Tools"
-                maintitleLink='/tools/calculators'
-                lastTitle='Calculators'
-                lastTitleLink='/tools/calculators?tab=performance'
-                haddingname='Fund Performance'
+ <RvBreadcrumbs
+              haddingname='Fund Performance'
+              lastTitle2='Performance'
+              lastTitle='Tools'
+              lastTitleLink='/tools/calculators'
+              lastTitle2Link='/tools/calculators?tab=performance'
             />
-      <div className="max-w-screen-xl mx-auto py-[30px] md:py-[60px] lg:px-1 px-3">
+            <div className="section">
+      <div className="container">
         {pageloading ? (
           <PageLoading />
         ) : (
-          <div>
+          <>
             <div className="grid lg:grid-cols-5 md:grid-cols-2 grid-cols-1 gap-5 mb-5">
               {categories?.map((item, index) => (
                 <div
                   key={index}
                   className={`px-3 py-3 bg-white border ${selectedCategory === item
-                    ? "border-[var(--rv-secondary)]"
-                    : "border-gray-300"
+                      ? "border-[var(--rv-secondary)]"
+                      : "border-gray-300"
                     } rounded shadow cursor-pointer flex flex-col items-center`}
                   onClick={() => handleCategorySelect(item)}
                 >
                   <Image
-                    src={`/${item}.svg`}
+                    src={`/images/icons/${item}.svg`}
                     width={70}
                     height={70}
                     className="mb-5 text-teal-500 "
@@ -163,8 +155,8 @@ export default function MarketUpdate() {
                 </div>
               ))}
             </div>
-            <div className="grid lg:grid-cols-4 md:grid-cols-1 grid-cols-1 gap-5 overflow-y-auto">
-              <div className="lg:col-span-1 h-screen">
+            <div className="grid lg:grid-cols-4 md:grid-cols-1 grid-cols-1 gap-5">
+              <div className="col-span-1">
                 {/* Search bar */}
                 <input
                   type="text"
@@ -173,12 +165,12 @@ export default function MarketUpdate() {
                   onChange={handleSearchChange}
                   className="w-full px-3 py-2 border rounded mb-1"
                 />
- 
+
                 {/* Display filtered schemes */}
                 {filteredSchemes?.map((scheme, index) => (
                   <div
                     key={index}
-                    className={`px-3 py-3 ${selectedScheme === scheme ? "bg-[var(--rv-primary)]" : "bg-white"
+                    className={`px-3 py-3 ${selectedScheme === scheme ? "bg-[var(--rv-secondary)]" : "bg-white"
                       } border border-gray-200 rounded shadow cursor-pointer my-2`}
                     onClick={() => handleSchemeSelect(scheme)}
                   >
@@ -191,7 +183,7 @@ export default function MarketUpdate() {
                   </div>
                 ))}
               </div>
-              <div className="lg:col-span-3 h-screen">
+              <div className="col-span-3">
                 {loading ? (
                   <Loading items={performanceData.length} />
                 ) : (
@@ -199,7 +191,7 @@ export default function MarketUpdate() {
                     <table className="min-w-full bg-white border border-gray-300 rounded text-sm">
                       <thead>
                         <tr className="bg-gray-100 text-gray-800 whitespace-nowrap">
-                          <th className="py-2 px-4 border-b text-left w-1">Fund Name</th>
+                          <th className="py-2 px-4 border-b text-left">Fund Name</th>
                           <th className="py-2 px-4 border-b text-center">1 Week</th>
                           <th className="py-2 px-4 border-b text-center">1 Month</th>
                           <th className="py-2 px-4 border-b text-center">3 Month</th>
@@ -217,7 +209,7 @@ export default function MarketUpdate() {
                             className="hover:bg-gray-100 cursor-pointer whitespace-nowrap"
                             onClick={() => handlePerformanceClick(performance)}
                           >
-                            <td className="py-2 px-4 border-b w-1">{performance.funddes}</td>
+                            <td className="py-2 px-4 border-b">{performance.funddes}</td>
                             <td className="py-2 px-4 border-b text-center">{performance.oneweek}</td>
                             <td className="py-2 px-4 border-b text-center">{performance.onemonth || "N/A"}</td>
                             <td className="py-2 px-4 border-b text-center">{performance.three_month || "N/A"}</td>
@@ -233,10 +225,11 @@ export default function MarketUpdate() {
                   </div>
                 )}
               </div>
- 
+
             </div>
-          </div>
+          </>
         )}
+      </div>
       </div>
     </div>
   );

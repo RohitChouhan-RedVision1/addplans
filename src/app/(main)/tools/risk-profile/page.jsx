@@ -16,7 +16,6 @@ import HCaptcha from "@hcaptcha/react-hcaptcha";
 import { footerData } from "@/data/footer";
 import Link from "next/link";
 
-import RvBreadcrumbs from "@/components/landing/page-breadcrumbs/rvbreadcrumbs";
 
 const RiskProfile = () => {
     const router = useRouter();
@@ -108,7 +107,7 @@ const RiskProfile = () => {
                         render={({ field }) => (
                             <FormItem>
                                 <FormControl>
-                                    <Input placeholder="User Name" {...field} aria-label="User Name" className="rvInput" />
+                                    <Input placeholder="User Name" {...field} aria-label="User Name" className="border-2 border-black" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -122,7 +121,7 @@ const RiskProfile = () => {
                         render={({ field }) => (
                             <FormItem>
                                 <FormControl>
-                                    <Input placeholder="Mobile" {...field} aria-label="Mobile Number" className="rvInput" />
+                                    <Input placeholder="Mobile" {...field} aria-label="Mobile Number" className="border-2 border-gray-500" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -136,7 +135,7 @@ const RiskProfile = () => {
                         render={({ field }) => (
                             <FormItem>
                                 <FormControl>
-                                    <Input type="email" placeholder="Email" {...field} aria-label="Email" className="rvInput" />
+                                    <Input type="email" placeholder="Email" {...field} aria-label="Email" className="border-2 border-gray-500" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -150,7 +149,7 @@ const RiskProfile = () => {
                         render={({ field }) => (
                             <FormItem>
                                 <FormControl>
-                                    <textarea placeholder="Message" {...field} className="rvTextarea" aria-label="Message" />
+                                    <textarea placeholder="Message" {...field} className="w-full border-2 border-gray-500 p-1 rounded" aria-label="Message" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -291,15 +290,7 @@ Here are the answers you provided:
     };
 
     return (
-        <div className="">
-      <div className="">
-        <RvBreadcrumbs
-          haddingname="Financial Health"
-        // lastTitle={post?.posttitle}
-
-        />
-      </div>
-        <div className="main_section section">
+        <div className="main_section">
             <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg">
             <Toaster />
             {isModalOpen && (
@@ -369,7 +360,6 @@ Here are the answers you provided:
                     </Button>
                 </div>
             )}
-        </div>
         </div>
         </div>
     );

@@ -46,19 +46,21 @@ const Input = React.forwardRef(({ className, type, ...props }, ref) => {
       className="p-[2px] rounded-lg transition duration-300 group/input"
     >
       <input
-        type={type}
-        className={cn(
-          `flex h-10 w-full border-none bg-white shadow-input rounded-md px-3 py-2 text-sm 
-           file:border-0 file:bg-transparent file:text-sm file:font-medium 
-           placeholder:text-neutral-600 focus-visible:outline-none focus-visible:ring-[2px] 
-           focus-visible:ring-neutral-600 disabled:cursor-not-allowed disabled:opacity-50 
-           dark:shadow-[0px_0px_1px_1px_var(--neutral-700)] group-hover/input:shadow-none 
-           transition duration-400`,
-          className
-        )}
-        ref={ref}
-        {...props}
-      />
+  type={type}
+  className={cn(
+    type === "range"
+      ? "customRange"
+      : `flex h-10 w-full bg-white shadow-input rounded-md px-3 py-2 text-sm 
+         file:border-0 file:bg-transparent file:text-sm file:font-medium 
+          focus-visible:outline-none focus-visible:ring-[2px] 
+         focus-visible:ring-neutral-600 disabled:cursor-not-allowed disabled:opacity-50 
+         dark:shadow-[0px_0px_1px_1px_var(--neutral-700)] group-hover/input:shadow-none 
+         transition duration-400`,
+    className
+  )}
+  ref={ref}
+  {...props}
+/>
     </motion.div>
   );
 });

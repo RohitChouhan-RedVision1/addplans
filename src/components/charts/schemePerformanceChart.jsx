@@ -18,75 +18,77 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/chart";
-export const description = "An area chart with gradient fill";
+
+export const description = "An area chart with gradient fill for scheme and Sensex data";
 
 const chartConfig = {
     amount: {
-        label: "Amount",
-        color: "#00aeef",
+        label: "Scheme Amount",
+        color: "var(--rv-secondary)", // Primary color for scheme data
     },
-    currentvalue: {
-        label: "Current Value",
-        color: "hsl(var(--chart-3))",
+    sensexAmount: {
+        label: "Sensex Amount",
+        color: "var(--rv-primary)", // Different color for Sensex data
     },
 };
 
-// Function to filter data based on the given range
-const filterDataByRange = (sipData) => {
-    // Check if sipData is valid
+const filterDataByRange = (sipData, sensexData) => {
     if (!sipData || !Array.isArray(sipData)) return [];
-
-
-    return sipData.map((item) => (
-        {
-            date: item.date || new Date().toISOString(), // Use current date if navDate is not defined
-            amount: item.currentValue || 0, // Default to 0 if amount is undefined
+    const filteredData = sipData.map((item, index) => {
+        const dataPoint = {
+            date: item.date || new Date().toISOString(),
+            amount: item.currentValue || 0,
+        };
+        if (sensexData && Array.isArray(sensexData) && sensexData[index]) {
+            dataPoint.sensexAmount = sensexData[index].currentValue || 0;
         }
-    ));
+        return dataPoint;
+    });
+    return filteredData;
 };
 
-export function SchemePerformanceChart({ piedata, startDate, endDate, title }) {
+export function SchemePerformanceChart({ data, startDate, endDate, title }) {
     const [chartData, setChartData] = React.useState([]);
-    const [valuation, setValuation] = React.useState([]);
+    const [valuation, setValuation] = React.useState({});
+
+    const getMinValue = () => {
+        const values = chartData
+            .flatMap((item) => [item.amount, item.sensexAmount])
+            .filter((v) => v !== undefined && !isNaN(v) && v !== null);
+        return values.length > 0 ? Math.min(...values) * 0.95 : 0;
+    };
+
+    const getMaxValue = () => {
+        const values = chartData
+            .flatMap((item) => [item.amount, item.sensexAmount])
+            .filter((v) => v !== undefined && !isNaN(v) && v !== null);
+        return values.length > 0 ? Math.max(...values) * 1.05 : 100;
+    };
 
     React.useEffect(() => {
-        setChartData(filterDataByRange(piedata.graphData));
-        setValuation(piedata);
-    }, [piedata]);
+        if (data && data.graphData) {
+            const filteredData = filterDataByRange(data.graphData, data.sensexGraphData);
+            setChartData(filteredData);
+            setValuation(data);
+        }
+    }, [data]);
+
+    const hasValidData = chartData.length > 0 && chartData.some((item) => item.amount > 0);
+
+    if (!hasValidData) {
+        return (
+            <Card>
+                <CardHeader>
+                    <CardTitle>{title}</CardTitle>
+                    <CardDescription>No data available</CardDescription>
+                </CardHeader>
+            </Card>
+        );
+    }
 
     return (
         <Card>
             <CardHeader>
-                <div className="grid grid-cols-7 gap-x-3 mb-5">
-                    <div className="py-2 px-3 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
-                        <h1 className="font-semibold text-gray-800 text-sm">Amount Invested</h1>
-                        <h1 className="font-medium text-gray-900 text-sm">{valuation?.investedAmount}</h1>
-                    </div>
-                    <div className="py-2 px-3 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
-                        <h1 className="font-semibold text-gray-800 text-sm">Buy Units</h1>
-                        <h1 className="font-medium text-gray-900 text-sm">{valuation?.buyUnit}</h1>
-                    </div>
-                    <div className="py-2 px-3 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
-                        <h1 className="font-semibold text-gray-800 text-sm">Profit/Loss</h1>
-                        <h1 className="font-medium text-gray-900 text-sm">{Math.floor(valuation?.maturityValue - valuation?.investedAmount)}</h1>
-                    </div>
-                    <div className="py-2 px-3 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
-                        <h1 className="font-semibold text-gray-800 text-sm">Maturity Rate</h1>
-                        <h1 className="font-medium text-gray-900 text-sm">{valuation?.RateAtMaturity}</h1>
-                    </div>
-                    <div className="py-2 px-3 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
-                        <h1 className="font-semibold text-gray-800 text-sm">Maturity Value</h1>
-                        <h1 className="font-medium text-gray-900 text-sm">{valuation?.maturityValue}</h1>
-                    </div>
-                    <div className="py-2 px-3 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
-                        <h1 className="font-semibold text-gray-800 text-sm">Absolute Return(%)</h1>
-                        <h1 className="font-medium text-gray-900 text-sm">{valuation?.absoluteReturns}</h1>
-                    </div>
-                    <div className="py-2 px-3 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
-                        <h1 className="font-semibold text-gray-800 text-sm">XIRR (%)</h1>
-                        <h1 className="font-medium text-gray-900 text-sm">{valuation?.xirrRate}</h1>
-                    </div>
-                </div>
                 <CardTitle>{title}</CardTitle>
                 <CardDescription>
                     {startDate} to {endDate} (Current Value As on {endDate})
@@ -97,14 +99,11 @@ export function SchemePerformanceChart({ piedata, startDate, endDate, title }) {
                     <AreaChart
                         accessibilityLayer
                         data={chartData}
-                        margin={{
-                            left: 12,
-                            right: 12,
-                        }}
+                        margin={{ top: 10, right: 0, left: -10, bottom: 0 }}
                     >
                         <CartesianGrid vertical={false} />
                         <XAxis
-                            dataKey="date" // Use the correct key for date
+                            dataKey="date"
                             tickLine={false}
                             axisLine={false}
                             tickMargin={8}
@@ -115,12 +114,14 @@ export function SchemePerformanceChart({ piedata, startDate, endDate, title }) {
                                 })
                             }
                         />
-                        <YAxis
+                        {/* <YAxis
+                            domain={[getMinValue(), getMaxValue()]}
                             tickLine={false}
                             axisLine={false}
-                            tickMargin={8}
-                            tickCount={8}
-                        />
+                            tickMargin={2}
+                            tick={{ fill: "#D1D5DB" }}
+                            tickFormatter={(value) => Math.round(value).toLocaleString()}
+                        /> */}
                         <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
                         <defs>
                             <linearGradient id="fillAmount" x1="0" y1="0" x2="0" y2="1">
@@ -135,15 +136,15 @@ export function SchemePerformanceChart({ piedata, startDate, endDate, title }) {
                                     stopOpacity={0.6}
                                 />
                             </linearGradient>
-                            <linearGradient id="fillCurrentvalue" x1="0" y1="0" x2="0" y2="1">
+                            <linearGradient id="fillSensexAmount" x1="0" y1="0" x2="0" y2="1">
                                 <stop
                                     offset="5%"
-                                    stopColor="var(--color-currentvalue)"
+                                    stopColor="var(--color-sensexAmount)"
                                     stopOpacity={1}
                                 />
                                 <stop
                                     offset="95%"
-                                    stopColor="var(--color-currentvalue)"
+                                    stopColor="var(--color-sensexAmount)"
                                     stopOpacity={0.6}
                                 />
                             </linearGradient>
@@ -157,11 +158,11 @@ export function SchemePerformanceChart({ piedata, startDate, endDate, title }) {
                             stackId="a"
                         />
                         <Area
-                            dataKey="currentvalue"
+                            dataKey="sensexAmount"
                             type="natural"
-                            fill="url(#fillCurrentvalue)"
+                            fill="url(#fillSensexAmount)"
                             fillOpacity={0.7}
-                            stroke="var(--color-currentvalue)"
+                            stroke="var(--color-sensexAmount)"
                             stackId="a"
                         />
                     </AreaChart>
@@ -171,10 +172,10 @@ export function SchemePerformanceChart({ piedata, startDate, endDate, title }) {
                 <div className="flex w-full items-start gap-2 text-sm">
                     <div className="grid gap-2">
                         <div className="flex items-center gap-2 font-medium leading-none">
-                            Trending up by {valuation?.absoluteReturns}%<TrendingUp className="h-4 w-4" />
+                            Trending up by {valuation?.absoluteReturns || 0}%<TrendingUp className="h-4 w-4" />
                         </div>
                         <div className="flex items-center gap-2 leading-none text-muted-foreground">
-                            {startDate} - {endDate}
+                            {startDate} to {endDate}
                         </div>
                     </div>
                 </div>

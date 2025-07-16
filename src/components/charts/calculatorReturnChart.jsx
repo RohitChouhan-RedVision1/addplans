@@ -10,7 +10,7 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import {
-    ChartConfig,
+
     ChartContainer,
     ChartLegend,
     ChartLegendContent,
@@ -20,18 +20,8 @@ import {
 
 export const description = "A stacked bar chart with a legend";
 
-const chartConfig = {
-    investedAmount: {
-        label: "Invested Amount",
-        color: "var(--rv-primary)",
-    },
-    growth: {
-        label: "Growth",
-        color: "var(--rv-secondary)",
-    },
-};
 
-export function CalculatorReturnChart({ data, title }) {
+export function CalculatorReturnChart({ data, title, chartConfig }) {
     return (
         <Card className="border border-[var(--rv-primary)]">
             <CardHeader>

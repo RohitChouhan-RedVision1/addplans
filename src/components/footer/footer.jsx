@@ -25,10 +25,10 @@ const Footer = ({ services, siteData, socialMedia, arnData }) => {
             title: "Contact Us",
             link: "/contact-us"
         },
-        {
-            title: "Blogs",
-            link: "/blogs"
-        },
+        // {
+        //     title: "Blogs",
+        //     link: "/blogs"
+        // },
         {
             title: "Financial Calculator",
             link: "/tools/calculators"

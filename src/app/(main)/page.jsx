@@ -33,7 +33,7 @@ export default async function Page() {
       <TestimonialSection testimonials={testimonial} sitedata={sitedata} />
       <WhyChooseSection />
       <WorkSection />
-      <TeamSection testimonial={testimonial} socialMedia={socialmedialinks} />
+      {/* <TeamSection testimonial={testimonial} socialMedia={socialmedialinks} /> */}
       <ContactUs sitedata={sitedata} />
     </AnimatedContent>
   );

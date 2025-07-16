@@ -50,7 +50,7 @@ export default function LatestNews() {
   }, [activeCategory, ipodata, marketdata, populardata]);
 
   return (
-    <section className="py-10">
+    <section className="">
       <RvBreadcrumbs
                 haddingname='News'
             />

@@ -1,6 +1,10 @@
 "use client";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { Line } from "react-chartjs-2";
+import "chart.js/auto";
+import RvBreadcrumbs from "@/components/landing/page-breadcrumbs/rvbreadcrumbs";
+
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
@@ -8,10 +12,37 @@ import { SipPerformanceChart } from "@/components/charts/sipPerformanceChart";
 import { FaFilePdf } from "react-icons/fa6";
 import SipPerformanceTable from "@/components/sipPerformanceTable";
 import { generatePDF } from "@/lib/generatePdf";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import RvBreadcrumbs from "@/components/landing/page-breadcrumbs/rvbreadcrumbs";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@radix-ui/react-label";
 
 export default function Page() {
+  const [loading, setLoading] = useState(false);
+  const FormSchema = z.object({
+    username: z
+      .string()
+      .min(2, { message: "Username must be at least 2 characters." }),
+    mobile: z.string().nonempty({ message: "Mobile number is required." }),
+    email: z.string().email({ message: "Invalid email address." }),
+  });
   function getTodayDate() {
     const today = new Date();
     const yyyy = today.getFullYear();
@@ -34,11 +65,54 @@ export default function Page() {
   const [viewby, setViewBy] = useState("graph");
   const [assetCategory, setAssetCategory] = useState([]);
   const [selectedAssets, setSelectedAssets] = useState(new Set());
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [graphData, setGraphData] = useState(false);
-  const [siteData, setSiteData] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [error, setError] = useState(null);
+  const [siteData, setSiteData] = useState("")
+
+  const form = useForm({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      username: "",
+      mobile: "",
+      email: "",
+      message: "",
+    },
+  });
+
+  // Handle form submission
+  const onSubmit = async (data) => {
+    setLoading(true);
+    const emaildata = {
+      user: data?.username,
+      to: data?.email,
+      subject: "Test Email",
+      text: "This is a test email sent from Nodemailer!",
+    };
+
+    try {
+      const response = await axios.post("/api/leads/", data);
+      const info = await axios.post("/api/email/", emaildata);
+      if (response.status === 201) {
+        toast({
+          description: "Your message has been sent.",
+        });
+        form.reset();
+      } else {
+        alert(response.statusText);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("An unexpected error occurred.");
+    }
+    localStorage.setItem("formSubmitted", "true");
+    localStorage.setItem("submissionTimestamp", Date.now().toString());
+    setIsModalOpen(false);
+    setLoading(false);
+    setIsSubmitted(true);
+    setGraphData(true);
+    haldleSubmit();
+  };
 
   // Constants for time calculations
   const TWENTY_DAYS_IN_MS = 15 * 24 * 60 * 60 * 1000; // 15 days in milliseconds
@@ -86,12 +160,25 @@ export default function Page() {
   };
 
   useEffect(() => {
-    fetchSchemes();
+    if (selectedAcms && selectedAcms.length > 0) {
+      fetchSchemes();
+    }
   }, [selectedAcms]);
+
+  const fetchdata = async () => {
+    const data = await fetch("/api/admin/site-settings", {
+      cache: "force-cache",
+    });
+    if (data.ok) {
+      const maindata = await data.json();
+      setSiteData(maindata[0]);
+    }
+  };
 
   React.useEffect(() => {
     fetcAcm();
     fetcAssetCategory();
+    fetchdata()
   }, []);
 
   const handleAssetSelect = (scheme) => {
@@ -126,19 +213,6 @@ export default function Page() {
     }
   }, [selectedAssets]);
 
-  useEffect(() => {
-    const fetchSiteData = async () => {
-      const res = await fetch("/api/admin/site-settings");
-      if (res.ok) {
-        const data = await res.json();
-        setSiteData(data[0]);
-      } else {
-        console.error("Failed to fetch site settings");
-      }
-    };
-    fetchSiteData();
-  }, []);
-
   const fetchAsset = async (funds) => {
     try {
       const response = await axios.get(
@@ -166,6 +240,7 @@ export default function Page() {
     }
   };
 
+  // Handle selecting/deselecting AMCs
   const handleAcmSelect = (scheme) => {
     if (selectedAcms.includes(scheme)) {
       setSelectedAcms(selectedAcms.filter((s) => s !== scheme));
@@ -175,137 +250,144 @@ export default function Page() {
     }
   };
 
-  const handleSubmit = async () => {
-    if (
-      (selectedAcms.length === 0 && selectedAssets.size === 0) ||
-      pcode.length === 0
-    ) {
+  const haldleSubmit = async () => {
+    if (selectedAcms.length === 0 && selectedAssets.size === 0) {
       toast({
         variant: "destructive",
         title: "Please select scheme",
       });
       setGraphData(false);
-      setError(true); // Set error to show "Data Not Found"
-      return; // Exit early to avoid API call
-    }
-
-    try {
-      const response = await axios.post(
-        `${process?.env?.NEXT_PUBLIC_DATA_API}/api/research-calculator/sip-performance`,
-        {
-          startDate: startsipDate,
-          endDate: endsipDate,
-          fundPcode: pcode,
-          valuationAsOnDate: valuationDate,
-          amount: Number(sipAmount),
+    } else {
+      try {
+        const response = await axios.post(
+          "https://wealthelite.in/eliteN/research-calculator/sip-performance",
+          {
+            startDate: startsipDate,
+            endDate: endsipDate,
+            fundPcode: pcode,
+            valuationAsOnDate: valuationDate,
+            amount: Number(sipAmount),
+          },
+          {
+            auth: {
+              username: "redvision_calcutors_user",
+              password: "7uXtqvbW6PI6r4enIT1MKs7XH897G3Un",
+            },
+          }
+        );
+        if (response.data.data == null) {
+          setGraphData(false);
+        } else {
+          setGraphData(true);
+          setResult(response.data.data);
         }
-      );
-
-      console.log("Response:", response.data);
-      console.log("Data field:", response.data.data);
-
-      if (response.data.data == null || Object.keys(response.data.data).length === 0) { // Checks for null or undefined
-        setGraphData(false);
-        setError(true); // Set error to trigger "Data Not Found"
-        setResult(null); // Clear result to prevent rendering stale data
-      } else {
-        setGraphData(true);
-        setResult(response.data.data);
-        setError(null); // Clear error
+      } catch (error) {
+        console.error("Error fetching schemes data:", error);
       }
-    } catch (error) {
-      console.error("Error fetching schemes data:", error);
-      setGraphData(false);
-      setError(true); // Set error to trigger "Data Not Found"
-      setResult(null); // Clear result
+    }
+  };
+
+  console.log(siteData)
+  const handlePdf = async (result, title, startsipDate, valuationDate) => {
+    generatePDF(result, title, startsipDate, valuationDate, "graphId", siteData);
+  };
+
+  const handleModelOpen = (open) => {
+    // Check if no schemes are selected
+    if (selectedAcms.length === 0 && selectedAssets.size === 0) {
       toast({
         variant: "destructive",
-        title: "Failed to fetch data",
-        description: error.message,
+        title: "Please select scheme",
       });
+    } else {
+      setIsModalOpen((prevState) => !prevState);
     }
   };
 
-  const handlePdf = async (result, title, startsipDate, valuationDate) => {
-    console.log(result)
-    generatePDF(result, title, startsipDate, valuationDate, "graphId", siteData,);
-  };
-
+  console.log(selectedAcms, schemesData)
   return (
     <div className="">
-            <RvBreadcrumbs
-                maintitle="Tools"
-                maintitleLink='/tools/calculators'
-                lastTitle='Calculators'
-                lastTitleLink='/tools/calculators?tab=performance'
-                lastTitle2='Sip Performance'
-            />
-      <div className="px-3 lg:px-2 max-w-screen-xl mx-auto py-[30px] md:py-[60px]">
+  <RvBreadcrumbs
+        haddingname='SIP Performace'
+        lastTitle2='Performance'
+              lastTitle='Tools'
+              lastTitleLink='/tools/calculators'
+              lastTitle2Link='/tools/calculators?tab=performance'
+      />
+      <div className="section">
+      <div className="container">
         <Toaster />
+
         <div>
           <div>
-            <div className="col-span-1 border border-gray-200 rounded-2xl bg-white p-2 mb-3">
+            <div className="col-span-1 border border-gray-200 rounded-2xl bg-white hover:text-white p-2 mb-3">
               <div className="sip-calculator container mx-auto p-3 sticky top-0 z-10">
+                {/* Investment Type Toggle */}
                 <div className="flex space-x-4 mb-8">
                   <Button
-                    onClick={() => (setIsMonthlySip(true), setSchemesData([]), setGraphData(false), setSelectedAcms([]))}
-                    className={`text-sm rounded-full hover:bg-[var(--rv-primary)] hover:text-white ${isMonthlySip ? "bg-[var(--rv-primary)] text-[var(--rv-secondary)]"
-                      : "bg-[var(--rv-secondary)] text-black border"
+                    onClick={() => (
+                      setIsMonthlySip(true),
+                      setSchemesData([]),
+                      setGraphData(false)
+                    )}
+                    className={`text-sm rounded-full hover:bg-[var(--rv-primary)] hover:text-white ${isMonthlySip
+                        ? "bg-[var(--rv-secondary)] text-white"
+                        : "bg-[var(--rv-primary)] text-white"
                       }`}
                   >
                     Fund House
                   </Button>
                   <Button
-                    onClick={() => (setIsMonthlySip(false), setSchemesData([]), setGraphData(false), setSelectedAssets(new Set()))}
-                    className={`text-sm rounded-full hover:bg-[var(--rv-primary)] hover:text-white ${!isMonthlySip ? "bg-[var(--rv-primary)] text-[var(--rv-secondary)]"
-                      : "bg-[var(--rv-secondary)] text-black border"
+                    onClick={() => (
+                      setIsMonthlySip(false),
+                      setSchemesData([]),
+                      setGraphData(false)
+                    )}
+                    className={`text-sm rounded-full hover:bg-[var(--rv-primary)] hover:text-white ${!isMonthlySip
+                        ? "bg-[var(--rv-secondary)] text-white"
+                        : "bg-[var(--rv-primary)] text-white"
                       }`}
                   >
                     Asset Category
                   </Button>
                 </div>
+
                 <div className="input-fields mt-5 mb-5">
                   {isMonthlySip ? (
                     <div className="w-full">
-                      <h4 className="font-semibold text-gray-700">Select AMC</h4>
+                      <h1 className="font-semibold text-gray-700">Select ACM</h1>
                       <div className="max-w-full mt-2 border border-gray-300 p-3 rounded h-60 overflow-y-auto">
                         <input
                           type="text"
                           placeholder="Search Scheme"
                           className="w-full px-3 py-2 border rounded mb-1"
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value.toLowerCase())} // Update search query
                         />
-                        {/* Render filtered checkboxes for each AMC */}
-                        {allAcmdata
-                          ?.filter((scheme) =>
-                            scheme?.funddes?.toLowerCase().includes(searchQuery)
-                          ).map((scheme, index) => (
-                            <div key={index} className="flex items-center mb-1">
-                              <input
-                                type="checkbox"
-                                id={`acm-${index}`}
-                                checked={selectedAcms.includes(scheme)}
-                                onChange={() => handleAcmSelect(scheme)}
-                                className="mr-2"
-                              />
-                              <label
-                                htmlFor={`acm-${index}`}
-                                className="text-stone-900 text-sm"
-                              >
-                                {scheme?.funddes}
-                              </label>
-                            </div>
-                          ))}
+                        {/* Render checkboxes for each AMC */}
+                        {allAcmdata?.map((scheme, index) => (
+                          <div key={index} className="flex items-center mb-1">
+                            <input
+                              type="checkbox"
+                              id={`acm-${index}`}
+                              checked={selectedAcms.includes(scheme)}
+                              onChange={() => handleAcmSelect(scheme)}
+                              className="mr-2"
+                            />
+                            <label
+                              htmlFor={`acm-${index}`}
+                              className="text-stone-900 text-sm"
+                            >
+                              {scheme?.funddes}
+                            </label>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2  gap-x-4 gap-y-4">
                       <div>
-                        <p className="font-semibold text-gray-700">
+                        <h1 className="font-semibold text-gray-700">
                           Select Equity Funds
-                        </p>
-                        {console.log(assetCategory)}
+                        </h1>
                         <div className="mt-2 border border-gray-300 p-3 rounded h-60 overflow-y-auto">
                           {/* Equity Funds checkboxes here */}
                           {assetCategory
@@ -314,7 +396,7 @@ export default function Page() {
                               <div key={index} className="flex items-center mb-1">
                                 <input
                                   type="checkbox"
-                                  id={`asset-equity-${index}`}
+                                  id={`asset-${index}`}
                                   checked={selectedAssets.has(
                                     scheme.assets_class
                                   )}
@@ -322,7 +404,7 @@ export default function Page() {
                                   className="mr-2"
                                 />
                                 <label
-                                  htmlFor={`asset-equity-${index}`}
+                                  htmlFor={`asset-${index}`}
                                   className="text-stone-900 text-sm"
                                 >
                                   Equity - {scheme?.assets_class}
@@ -332,9 +414,9 @@ export default function Page() {
                         </div>
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-700">
+                        <h1 className="font-semibold text-gray-700">
                           Select Debt Funds
-                        </p>
+                        </h1>
                         <div className="mt-2 border border-gray-300 p-3 rounded h-60 overflow-y-auto">
                           {assetCategory
                             ?.filter((item) => item.nav_c2 === "Debt")
@@ -342,7 +424,7 @@ export default function Page() {
                               <div key={index} className="flex items-center mb-1">
                                 <input
                                   type="checkbox"
-                                  id={`asset-debt-${index}`}
+                                  id={`asset-${index}`}
                                   checked={selectedAssets.has(
                                     scheme.assets_class
                                   )}
@@ -350,7 +432,7 @@ export default function Page() {
                                   className="mr-2"
                                 />
                                 <label
-                                  htmlFor={`asset-debt-${index}`}
+                                  htmlFor={`asset-${index}`}
                                   className="text-stone-900 text-sm"
                                 >
                                   Debt - {scheme?.assets_class}
@@ -360,9 +442,9 @@ export default function Page() {
                         </div>
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-700">
+                        <h1 className="font-semibold text-gray-700">
                           Select Hybrid Funds
-                        </p>
+                        </h1>
                         <div className="mt-2 border border-gray-300 p-3 rounded h-60 overflow-y-auto">
                           {/* Hybrid Funds checkboxes here */}
                           {assetCategory
@@ -371,7 +453,7 @@ export default function Page() {
                               <div key={index} className="flex items-center mb-1">
                                 <input
                                   type="checkbox"
-                                  id={`asset-hybrid-${index}`}
+                                  id={`asset-${index}`}
                                   checked={selectedAssets.has(
                                     scheme.assets_class
                                   )}
@@ -379,7 +461,7 @@ export default function Page() {
                                   className="mr-2"
                                 />
                                 <label
-                                  htmlFor={`asset-hybrid-${index}`}
+                                  htmlFor={`asset-${index}`}
                                   className="text-stone-900 text-sm"
                                 >
                                   Hybrid - {scheme?.assets_class}
@@ -389,9 +471,9 @@ export default function Page() {
                         </div>
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-700">
+                        <h1 className="font-semibold text-gray-700">
                           Select Commodity Funds/ Others
-                        </p>
+                        </h1>
                         <div className="mt-2 border border-gray-300 p-3 rounded h-60 overflow-y-auto">
                           {assetCategory
                             ?.filter(
@@ -404,7 +486,7 @@ export default function Page() {
                               <div key={index} className="flex items-center mb-1">
                                 <input
                                   type="checkbox"
-                                  id={`asset-other-${index}`}
+                                  id={`asset-${index}`}
                                   checked={selectedAssets.has(
                                     scheme.assets_class
                                   )}
@@ -412,7 +494,7 @@ export default function Page() {
                                   className="mr-2"
                                 />
                                 <label
-                                  htmlFor={`asset-other-${index}`}
+                                  htmlFor={`asset-${index}`}
                                   className="text-stone-900 text-sm"
                                 >
                                   Other - {scheme?.assets_class}
@@ -425,46 +507,34 @@ export default function Page() {
                   )}
                 </div>
                 <hr />
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                  <div className="mb-4">
-                    <label
-                      htmlFor="schemeSelect"
-                      className="text-sm block font-semibold text-gray-700 mb-1"
-                    >
-                      Select Scheme
-                    </label>
-                    <select
-                      id="schemeSelect"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                      onChange={(e) => {
-                        const selectedScheme = schemesData?.data?.find(
-                          (scheme) => scheme.funddes === e.target.value
-                        );
-                        setPcode(selectedScheme?.pcode);
-                        setTitle(selectedScheme?.funddes);
-                      }}
-                    >
-                      <option value="" selected>
-                        Choose a scheme
-                      </option>
-                      {!isMonthlySip ?
-                        schemesData
-                          ? schemesData &&
-                          schemesData?.data?.map((scheme, index) => (
-                            <option key={index} value={scheme?.funddes}>
-                              {scheme?.funddes}
-                            </option>
-                          ))
-                          : "Loading..."
-                        :
-                        selectedAcms &&
-                          selectedAcms.length > 0 &&
-                          schemesData?.data ? (
+                <div className="grid grid-cols-1 lg:grid-cols-6">
+                  <div className="col-span-2 mt-2 overflow-y-auto p-2">
+                    {/* Dropdown for selecting a scheme */}
+                    <div className="mb-4">
+                      <label
+                        htmlFor="schemeSelect"
+                        className="text-sm block font-semibold text-gray-700 mb-1"
+                      >
+                        Select Scheme
+                      </label>
+                      <select
+                        id="schemeSelect"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                        onChange={(e) => {
+                          const selectedScheme = schemesData?.data?.find(
+                            (scheme) => scheme.funddes === e.target.value
+                          );
+                          setPcode(selectedScheme?.pcode);
+                          setTitle(selectedScheme?.funddes);
+                        }}
+                      >
+                        <option value="" selected>
+                          Choose a scheme
+                        </option>
+                        {selectedAcms && selectedAcms.length > 0 && schemesData?.data ? (
                           schemesData.data
                             .filter((scheme) =>
-                              selectedAcms.some(
-                                (acm) => acm.fund === scheme.fund
-                              )
+                              selectedAcms.some((acm) => acm.fund === scheme.fund)
                             )
                             .map((scheme, index) => (
                               <option key={index} value={scheme.funddes}>
@@ -472,58 +542,71 @@ export default function Page() {
                               </option>
                             ))
                         ) : (
-                          <option disabled>Select...</option>
+                          <option disabled>Loading...</option>
                         )}
-                    </select>
+
+                      </select>
+                    </div>
                   </div>
-                  <div className="mb-4">
-                    <label
-                      htmlFor="schemeName"
-                      className="text-sm block font-semibold text-gray-700 mb-1"
-                    >
-                      SIP Amount (Monthly)
-                    </label>
-                    <input
-                      type="number"
-                      id="schemeName"
-                      placeholder="Enter scheme name"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                      value={sipAmount}
-                      onChange={(e) => setSipAmount(e.target.value)}
-                    />
+                  <div className="col-span-2 mt-2 overflow-y-auto p-2">
+                    {/* Text input for scheme name */}
+                    <div className="mb-4">
+                      <label
+                        htmlFor="schemeName"
+                        className="text-sm block font-semibold text-gray-700 mb-1"
+                      >
+                        SIP Amount (Monthly)
+                      </label>
+                      <input
+                        type="number"
+                        id="schemeName"
+                        placeholder="Enter scheme name"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                        value={sipAmount}
+                        onChange={(e) => setSipAmount(e.target.value)}
+                      />
+                    </div>
                   </div>
-                  <div className="mb-4">
-                    <label
-                      htmlFor="schemeDate"
-                      className="text-sm block font-semibold text-gray-700 mb-1"
-                    >
-                      Start Date
-                    </label>
-                    <input
-                      type="date"
-                      id="schemeDate"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                      value={startsipDate}
-                      onChange={(e) => setStartSipDate(e.target.value)}
-                    />
+
+                  {/* Date input for selecting a date */}
+                  <div className="col-span-2 mt-2 overflow-y-auto p-2">
+                    <div className="mb-4">
+                      <label
+                        htmlFor="schemeDate"
+                        className="text-sm block font-semibold text-gray-700 mb-1"
+                      >
+                        SIP Start Date
+                      </label>
+                      <input
+                        type="date"
+                        id="schemeDate"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                        value={startsipDate}
+                        onChange={(e) => setStartSipDate(e.target.value)}
+                      />
+                    </div>
                   </div>
-                  <div className="mb-4">
-                    <label
-                      htmlFor="schemeDate"
-                      className="text-sm block font-semibold text-gray-700 mb-1"
-                    >
-                      End Date
-                    </label>
-                    <input
-                      type="date"
-                      id="schemeDate"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                      min={startsipDate}
-                      value={endsipDate}
-                      onChange={(e) => setEndSipDate(e.target.value)}
-                    />
+                  {/* Date input for selecting a date */}
+                  <div className="col-span-2 mt-2 overflow-y-auto p-2">
+                    <div className="mb-4">
+                      <label
+                        htmlFor="schemeDate"
+                        className="text-sm block font-semibold text-gray-700 mb-1"
+                      >
+                        SIP End Date
+                      </label>
+                      <input
+                        type="date"
+                        id="schemeDate"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                        min={startsipDate}
+                        value={endsipDate}
+                        onChange={(e) => setEndSipDate(e.target.value)}
+                      />
+                    </div>
                   </div>
-                  <div className="lg:col-span-2">
+                  {/* Date input for selecting a date */}
+                  <div className="col-span-2 mt-2 overflow-y-auto p-2">
                     <div className="mb-4">
                       <label
                         htmlFor="schemeDate"
@@ -543,9 +626,10 @@ export default function Page() {
                     </div>
                   </div>
                 </div>
+
                 <Button
-                  className="bg-[var(--rv-primary)] text-[var(--rv-secondary)] hover:bg-[var(--rv-secondary)]  hover:text-black"
-                  onClick={() => handleSubmit()}
+                  className="bg-[var(--rv-secondary)] text-white hover:bg-[var(--rv-primary)]  hover:text-white"
+                  onClick={() => haldleSubmit()}
                 // disabled={!pcode} // disables when pcode is falsy (empty, null, undefined)
                 >
                   Show
@@ -576,71 +660,47 @@ export default function Page() {
                   <div
                     className="cursor-pointer"
                     onClick={() =>
-                      handlePdf(result, title, startsipDate, valuationDate)
+                      handlePdf(
+                        result.sipData,
+                        title,
+                        startsipDate,
+                        valuationDate
+                      )
                     }
                   >
-                    <h1 className="text-2xl">{viewby === "graph" && <FaFilePdf />}</h1>
+                    <h1 className="text-2xl">
+                      <FaFilePdf />
+                    </h1>
                   </div>
                 </div>
               )}
-              {graphData && result && (
+              {result ? (
                 viewby === "graph" ? (
-                  <div>
-                    <div className="grid lg:grid-cols-7 md:grid-cols-3 gap-x-3 gap-y-2 my-10">
-                      <div className="py-2 px-3 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
-                        <h1 className="font-semibold text-sm">Amount Invested</h1>
-                        <h1 className="font-medium text-sm">{result?.valuation?.investedAmount}</h1>
-                      </div>
-                      <div className="py-2 px-3 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
-                        <h1 className="font-semibold text-sm">Current Value</h1>
-                        <h1 className="font-medium text-sm">{result?.valuation?.currentAssetValue}</h1>
-                      </div>
-                      <div className="py-2 px-3 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
-                        <h1 className="font-semibold text-sm">Profit/Loss</h1>
-                        <h1 className="font-medium text-sm">{result?.valuation?.pl}</h1>
-                      </div>
-                      <div className="py-2 px-3 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
-                        <h1 className="font-semibold text-sm">MONTHLY SIP</h1>
-                        <h1 className="font-medium text-sm">{result?.valuation?.sipAmout}</h1>
-                      </div>
-                      <div className="py-2 px-3 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
-                        <h1 className="font-semibold text-sm">Current NAV</h1>
-                        <h1 className="font-medium text-sm">{result?.valuation?.currentNav}</h1>
-                      </div>
-                      <div className="py-2 px-3 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
-                        <h1 className="font-semibold text-sm">Absolute Return(%)</h1>
-                        <h1 className="font-medium text-sm">{result?.valuation?.absoluteReturns}</h1>
-                      </div>
-                      <div className="py-2 px-3 border border-stone-600 shadow shadow-emerald-100 rounded-sm text-center">
-                        <h1 className="font-semibold text-sm">XIRR (%)</h1>
-                        <h1 className="font-medium text-sm">{result?.valuation?.xirrRate}</h1>
-                      </div>
-                    </div>
-                    <div id="graphId">
-                      <SipPerformanceChart
-                        piedata={result}
-                        startDate={startsipDate}
-                        endDate={valuationDate}
-                        title={title}
-                      />
+                  <div id="graphId">
+                    <div>
+                      {" "}
+                      {/* Adjust width as needed */}
+                      {graphData && (
+                        <SipPerformanceChart
+                          piedata={result}
+                          startDate={startsipDate}
+                          endDate={valuationDate}
+                          title={title}
+                        />
+                      )}
                     </div>
                   </div>
                 ) : (
-                  <div>
-                    <SipPerformanceTable data={result} />
-                  </div>
+                  <div>{graphData && <SipPerformanceTable data={result} />}</div>
                 )
-              )}
-              {console.log(error)}
-              {error && !graphData && (
-                <div className="">
-                  Data Not Found
-                </div>
+              ) : (
+                <div>No Data Found</div>
               )}
             </div>
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

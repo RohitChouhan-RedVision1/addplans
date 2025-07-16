@@ -30,7 +30,7 @@ export default function HeroSection({ sitedata }) {
       title: "Trust Is Our Core",
       highlight: "It's Not Just About Wealth",
       ending: "It's About You!",
-      description: "Success. Trust. Guarantee - We're dedicated to securing your financial future together!",
+      description: "Success. Trust. Assurance - We're dedicated to securing your financial future together!",
     },
     {
       image: "/images/banners/banner-2.webp",
@@ -38,7 +38,7 @@ export default function HeroSection({ sitedata }) {
       title: "Trust Is Our Core",
       highlight: "It's Not Just About Wealth",
       ending: "It's About You!",
-      description: "Success. Trust. Guarantee - We're dedicated to securing your financial future together!",
+      description: "Success. Trust. Assurance - We're dedicated to securing your financial future together!",
     },
     // {
     //   image: "/images/banners/banner-3.webp",
@@ -46,7 +46,7 @@ export default function HeroSection({ sitedata }) {
     //   title: "Trust Is Our Core",
     //   highlight: "It's Not Just About Wealth",
     //   ending: "It's About You!",
-    //   description: "Success. Trust. Guarantee - We're dedicated to securing your financial future together!",
+    //   description: "Success. Trust. Assurance - We're dedicated to securing your financial future together!",
     // },
   ];
 

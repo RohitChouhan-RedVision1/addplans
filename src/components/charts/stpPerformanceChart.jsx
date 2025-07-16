@@ -139,13 +139,14 @@ export function StpPerformanceChart({ piedata, startDate, endDate, title, withdr
                 </ChartContainer>
             </CardContent>
             <CardFooter>
+                {console.log(piedata)}
                 <div className="flex w-full items-start gap-2 text-sm">
                     <div className="grid gap-2">
                         <div className="flex items-center gap-2 font-medium leading-none">
-                            Trending up by {piedata?.xirrRate}%<TrendingUp className="h-4 w-4" />
+                            Trending up by {piedata?.withdrawlingScheme?.xirrRate}%<TrendingUp className="h-4 w-4" />
                         </div>
                         <div className="flex items-center gap-2 leading-none text-muted-foreground">
-                            {startDate} - {endDate}
+                            {startDate} to {endDate}
                         </div>
                     </div>
                 </div>

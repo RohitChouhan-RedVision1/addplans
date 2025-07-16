@@ -19,18 +19,9 @@ import {
 
 export const description = "A pie chart with a legend"
 
-const chartConfig = {
-    invested: {
-        label: "Invested",
-        color: "var(--rv-primary)",
-    },
-    return: {
-        label: "Return",
-        color: "var(--rv-secondary)",
-    },
-}
 
-export function SippieChart({ piedata, title, customLabels }) {
+
+export function SippieChart({ piedata, title, chartConfig }) {
     const chartData = [
         {
             browser: "invested",
@@ -43,11 +34,6 @@ export function SippieChart({ piedata, title, customLabels }) {
             fill: "var(--rv-secondary)",
         },
     ]
-
-    const labels = customLabels || {
-        invested: chartConfig.invested.label,
-        return: chartConfig.return.label,
-    }
 
     return (
         <Card className="flex flex-col border border-[var(--rv-primary)]">
@@ -77,7 +63,7 @@ export function SippieChart({ piedata, title, customLabels }) {
                                     dominantBaseline={props.dominantBaseline}
                                     fill="var(--rv-primary)"
                                 >
-                                    {`${labels[payload.browser]} (${payload.visitors})`}
+                                    {/* {`${labels[payload.browser]} (${payload.visitors})`} */}
                                 </text>
                             )}
                             nameKey="browser"

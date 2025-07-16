@@ -31,7 +31,7 @@ const defaultChartData = [
 const chartConfig = {
     mobile: {
         label: "Mobile",
-        color: "var(--rv-primary)",
+        color: "var(--rv-secondary)",
     },
 };
 
@@ -71,7 +71,7 @@ export function BseReturnChart({ data }) {
                             tickLine={false}
                             axisLine={false}
                             tickMargin={8}
-                            tickFormatter={(value) => value.slice(0, 4)}
+                            tickFormatter={(value) => value.slice(0,4)}
                         />
                         <YAxis
                             dataKey={data && data.length > 0 ? "sensex_close" : "mobile"}

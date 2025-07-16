@@ -4,6 +4,7 @@ import Image from "next/image";
 import React, { useState } from "react";
 import Link from "next/link";
 import { Breadcrumb, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbItem, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+// import Banner from "@/components/section-banner/banner";
 import RvBreadcrumbs from "@/components/landing/page-breadcrumbs/rvbreadcrumbs";
 
 export default function PayPremium() {
@@ -15,69 +16,69 @@ export default function PayPremium() {
 
     const fiimagedata = [
         {
-            image: "/lifeinsurancelogo/1.webp",
+            image: "/images/lifeinsurancelogo/1.webp",
             link: "https://licindia.in/premium-payment"
         },
         {
-            image: "/lifeinsurancelogo/2.webp",
+            image: "/images/lifeinsurancelogo/2.webp",
             link: "https://portal.uiic.in/GCWebPortal/gcDealerMisc/pgmessagebuildoffice.do"
         },
         {
-            image: "/lifeinsurancelogo/3.webp",
+            image: "/images/lifeinsurancelogo/3.webp",
             link: "https://online.avivaindia.com/econnect/Pages/PayPremiumDirect.aspx"
         },
         {
-            image: "/lifeinsurancelogo/4.webp",
+            image: "/images/lifeinsurancelogo/4.webp",
             link: "https://www.bhartiaxa.com/pay-premium-online"
         },
         {
-            image: "/lifeinsurancelogo/5.webp",
+            image: "/images/lifeinsurancelogo/5.webp",
             link: "https://www.bajajallianzlife.com/renewal-payment.html"
         },
     ];
 
     const hiimagedata = [
         {
-            image: "/healthinsurancelogo/1.webp",
+            image: "/images/healthinsurancelogo/1.webp",
             link: "https://www.icicilombard.com/renew-policy-online#/AllRenewal"
         },
         {
-            image: "/healthinsurancelogo/2.webp",
+            image: "/images/healthinsurancelogo/2.webp",
             link: "https://www.tataaig.com/renewal?lob=others&renewalHeader=yes"
         },
         {
-            image: "/healthinsurancelogo/3.webp",
+            image: "/images/healthinsurancelogo/3.webp",
             link: "https://transactions.nivabupa.com/renewal/renewpolicies.aspx"
         },
         {
-            image: "/healthinsurancelogo/4.webp",
+            image: "/images/healthinsurancelogo/4.webp",
             link: "https://www.starhealth.in/help/internal/website/"
         },
         {
-            image: "/healthinsurancelogo/5.webp",
+            image: "/images/healthinsurancelogo/5.webp",
             link: "https://transactions.nivabupa.com/renewal/renewpolicies.aspx"
         },
     ];
 
     const giimagedata = [
         {
-            image: "/generalinsurancelogo/1.webp",
+            image: "/images/generalinsurancelogo/1.webp",
             link: "https://my.royalsundaram.in/"
         },
         {
-            image: "/generalinsurancelogo/2.webp",
+            image: "/images/generalinsurancelogo/2.webp",
             link: "https://www.tataaig.com/renewal?lob=others&renewalHeader=yes"
         },
         {
-            image: "/generalinsurancelogo/3.webp",
+            image: "/images/generalinsurancelogo/3.webp",
             link: "https://www.sbigeneral.in/policy-renewal"
         },
         {
-            image: "/generalinsurancelogo/4.webp",
+            image: "/images/generalinsurancelogo/4.webp",
             link: "https://www.reliancegeneral.co.in/insurance/health-insurance/renewal-online-premium-calculation.aspx"
         },
         {
-            image: "/generalinsurancelogo/5.webp",
+            image: "/images/generalinsurancelogo/5.webp",
             link: "https://orientalinsurance.org.in/"
         },
     ];
@@ -85,21 +86,21 @@ export default function PayPremium() {
     const data = selectedCategory === 'li' ? fiimagedata : selectedCategory === 'hi' ? hiimagedata : giimagedata;
     return (
         <div className="">
-            <RvBreadcrumbs
-                haddingname="Pay Premium Online"
-            />
+              <RvBreadcrumbs
+                    maintitle='Pay Premium Online'
+                  />
             {/* <Banner title={"Pay Premium Online"} /> */}
-            <div className="section">
-            <section className="container">
+            <section className="section">
+                <div className="container">
                 <div className='md:px-5 py-4 bg-[var(--rv-secondary)] text-black flex items-center gap-x-2 md:gap-x-10  rounded'>
                     <div className='cursor-pointer' onClick={() => handleCategoryClick('gi')}>
-                        <p className={`uppercase font-semibold hover:text-[--rv-primary] ${selectedCategory === 'gi' ? 'text-[var(--rv-primary)]' : ''}`}>General Insurance</p>
+                        <p className={`uppercase font-semibold   hover:text-[--rv-primary] ${selectedCategory === 'gi' ? 'text-[var(--rv-primary)]' : 'text-[--rv-white]'}`}>General Insurance</p>
                     </div>
                     <div className='cursor-pointer' onClick={() => handleCategoryClick('li')}>
-                        <p className={`uppercase font-semibold hover:text-[--rv-primary] ${selectedCategory === 'li' ? 'text-[var(--rv-primary)]' : ''}`}>Life Insurance</p>
+                        <p className={`uppercase font-semibold   hover:text-[--rv-primary] ${selectedCategory === 'li' ? 'text-[var(--rv-primary)]' : 'text-[--rv-white]'}`}>Life Insurance</p>
                     </div>
                     <div className='cursor-pointer' onClick={() => handleCategoryClick('hi')}>
-                        <p className={`uppercase font-semibold hover:text-[--rv-primary] ${selectedCategory === 'hi' ? 'text-[var(--rv-primary)]' : ''}`}>Health Insurance</p>
+                        <p className={`uppercase font-semibold   hover:text-[--rv-primary] ${selectedCategory === 'hi' ? 'text-[var(--rv-primary)]' : 'text-[--rv-white]'}`}>Health Insurance</p>
                     </div>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-x-3 my-5">
@@ -111,8 +112,8 @@ export default function PayPremium() {
                         </Link>
                     ))}
                 </div>
+                </div>
             </section>
-            </div>
         </div>
     );
 }
