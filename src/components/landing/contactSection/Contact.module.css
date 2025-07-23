@@ -43,7 +43,7 @@
 .gtitnssCard {
   border: 1px solid #ddd;
   background: var(--rv-white);
-  padding: 35px;
+  /* padding: 35px; */
   background-color: var(--rv-white);
   -webkit-clip-path: polygon(0 0, 100% 0, 100% 0, 100% 79%, 86% 100%, 0 100%, 0 100%, 0 0);
           clip-path: polygon(0 0, 100% 0, 100% 0, 100% 79%, 86% 100%, 0 100%, 0 100%, 0 0);

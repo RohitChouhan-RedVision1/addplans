@@ -41,7 +41,7 @@ export const servicesdata = [{
         iconeImg: '/images/services/mutual-funds.svg',
         imgContent: '',
         getInTouchButton: 'Explore Mutual Funds Now',
-        getInTouchDescription: 'Mutual funds are a smart way to achieve your financial goals while benefiting from professional expertise. Let Addplans Services India Pvt Ltd IMF help you build a future-ready portfolio today.',
+        getInTouchDescription: 'Mutual funds are a smart way to achieve your financial goals while benefiting from professional expertise. Let Addplans Services India Pvt Ltd help you build a future-ready portfolio today.',
         getInTouchButtonLink: '/contact-us',
         shortDescription: `Investment options diversifying portfolios in stocks, bonds, or securities, professionally managed for long-term wealth growth.`,
         description: `<div>

@@ -9,6 +9,7 @@ import styles from './Footer.module.css'
 import { servicesdata } from "@/data/commanData";
 
 const Footer = ({ services, siteData, socialMedia, arnData }) => {
+    console.log(arnData)
     const iconMap = {
         Facebook: <FaFacebookF className="text-[var(--rv-primary)]" />,
         Instagram: <FaInstagram className="text-[var(--rv-primary)]" />,
@@ -201,6 +202,7 @@ const Footer = ({ services, siteData, socialMedia, arnData }) => {
                         </ul>
                     </div>
                     <div className={styles.footerCtasabidic}>
+                        <p className="mb-2">AMFI Registered Mutual Fund Distributor | ARN : {arnData[0]?.arn} | Date of Registration: -- | Current Validity: -- TO -- || EUIN- {arnData[0].euins[0].euin} Current Validity: -- TO --</p>
                         <p className="">{siteData?.websiteName} is an AMFI Registered Mutual Fund Distributor.</p>
                         <p className="">
                             Disclaimer: Mutual Fund investments are subject to market risks, read all scheme related documents carefully. The NAVs of the schemes may go up or down depending upon the factors and forces affecting the securities market including the fluctuations in the interest rates. The past performance of the mutual funds is not necessarily indicative of future performance of the schemes. The Mutual Fund is not guaranteeing or assuring any dividend under any of the schemes and the same is subject to the availability and adequacy distributable surplus.

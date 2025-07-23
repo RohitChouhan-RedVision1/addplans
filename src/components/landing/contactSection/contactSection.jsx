@@ -6,6 +6,7 @@ import ContactReusableForm from "./Contactreusableform";
 import { IoCall, IoLocationSharp, IoMail } from "react-icons/io5";
 import Link from "next/link";
 import SectionHeading from "@/components/landing/section-heading/sectionheading";
+import Image from "next/image";
 
 
 export default function ContactUsFormSection({ sitedata }) {
@@ -52,7 +53,15 @@ export default function ContactUsFormSection({ sitedata }) {
           {/* Right Section (Contact Form) */}
           <div className={`${styles.gtitnsCol} rvCol`}>
             <div className={`${styles.gtitnssCard}`}>
-              <ContactReusableForm />
+             <Image
+                                                 src="/images/contact/contactus.jpg"
+                                                 alt="Contact us"
+                                                 width={1000}
+                                                 height={500} // Adjust as needed for aspect ratio
+             
+                                                 className='object-cover'
+                                             />
+              {/* <ContactReusableForm /> */}
             </div>
           </div>
         </div>
